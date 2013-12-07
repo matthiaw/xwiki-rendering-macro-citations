@@ -39,6 +39,12 @@ import org.xwiki.rendering.macro.MacroExecutionException;
 import org.xwiki.rendering.syntax.Syntax;
 import org.xwiki.rendering.transformation.MacroTransformationContext;
 
+/**
+ * Place a citation object into a document as reference or footnote
+ * 
+ * @version 1.0
+ * @since 5.1
+ */
 @Component
 @Named("citation")
 public class CitationMacro extends AbstractMacro<CitationMacroParameters> {
@@ -54,13 +60,26 @@ public class CitationMacro extends AbstractMacro<CitationMacroParameters> {
 		super("Citation", DESCRIPTION, CitationMacroParameters.class);
 	}
 
+	/**
+	 * Provide Component Manager
+	 */
 	@Inject
 	@Named("context")
 	private Provider<ComponentManager> componentManagerProvider;
 
+	/**
+	 * Content Parser
+	 */
 	@Inject
 	private MacroContentParser contentParser;
 
+	/**
+	 * Find the Citation Object which holds the cited key
+	 * 
+	 * @param key
+	 *            key of the citation object
+	 * @return Object of DefaultCitation over Interface Citation
+	 */
 	private Citation findCitation(String key) {
 		try {
 			for (Object citObj : componentManagerProvider.get().getInstanceList(Citation.class)) {
@@ -75,6 +94,13 @@ public class CitationMacro extends AbstractMacro<CitationMacroParameters> {
 		return null;
 	}
 
+	/**
+	 * Helper Method which evaluates value
+	 * 
+	 * @param value
+	 *            String Value which is evaluated
+	 * @return true if value is not Null or empty
+	 */
 	private boolean isValid(String value) {
 		if (value == null) {
 			return false;
@@ -85,19 +111,26 @@ public class CitationMacro extends AbstractMacro<CitationMacroParameters> {
 				return true;
 			}
 		}
-		// return false;
 	}
 
 	@Override
 	public List<Block> execute(CitationMacroParameters parameters, String content, MacroTransformationContext context) throws MacroExecutionException {
+		
+		/** Build-String for relevant content*/
 		StringBuilder citationContent = new StringBuilder();
 
+		/** boolean value which holds the information if the citation refers to a specific page*/
 		boolean hasPages = false;
+		
+		/** Holds refered Pages if it is given*/
 		String citePages = "";
 
+		/** citation of key */
 		Citation citation = findCitation(parameters.getKey());
 
 		if (citation != null) {
+			/** Content is "styled" as article. Hard coded*/
+			// TODO Would be better as CSS.
 			if (citation.getType().equals("Article")) {
 				String value = citation.getAuthor();
 				if (isValid(value)) {
@@ -161,7 +194,7 @@ public class CitationMacro extends AbstractMacro<CitationMacroParameters> {
 				if (isValid(value)) {
 					citationContent.append(". " + value + ".");
 				}
-				
+
 			}
 
 			if (citation.getType().equals("Book")) {
@@ -196,8 +229,6 @@ public class CitationMacro extends AbstractMacro<CitationMacroParameters> {
 				value = citation.getAddress();
 				if (isValid(value)) {
 					citationContent.append(", " + value + "");
-				} else {
-//					citationContent.append(", {{error}}Address missing{{/error}}");
 				}
 
 				value = citation.getEdition();
@@ -239,7 +270,7 @@ public class CitationMacro extends AbstractMacro<CitationMacroParameters> {
 					citePages = pages;
 					hasPages = true;
 				}
-				
+
 			}
 
 			if (citation.getType().equals("Conference") || citation.getType().equals("Inbook") || citation.getType().equals("Incollection") || citation.getType().equals("Inproceedings")
@@ -255,7 +286,7 @@ public class CitationMacro extends AbstractMacro<CitationMacroParameters> {
 				value = citation.getTitle();
 				if (isValid(value)) {
 					citationContent.append(", //" + value + "//");
-				} 
+				}
 
 				value = citation.getBooktitle();
 				if (isValid(value)) {
@@ -319,10 +350,10 @@ public class CitationMacro extends AbstractMacro<CitationMacroParameters> {
 					citePages = pages;
 					hasPages = true;
 				}
-				
+
 			}
 		} else {
-			citationContent.append("{{error}}Citation '"+parameters.getKey()+"' not found{{/error}}");
+			citationContent.append("{{error}}Citation '" + parameters.getKey() + "' not found{{/error}}");
 		}
 
 		String pages = parameters.getPages();
@@ -330,26 +361,26 @@ public class CitationMacro extends AbstractMacro<CitationMacroParameters> {
 			citePages = pages;
 			hasPages = true;
 		}
-		
-		if (parameters.getFootnote()!=null) {
+
+		/** Enables the usage as reference or footnote */
+		if (parameters.getFootnote() != null) {
 			if (parameters.getFootnote().equals("false")) {
-//				System.out.println("Ref A");
 				citationContent.insert(0, "{{reference}}");
 				citationContent.append("{{/reference}}");
 			} else {
-//				System.out.println("Footnote");
 				citationContent.insert(0, "{{footnote}}");
 				citationContent.append("{{/footnote}}");
 				hasPages = false;
 			}
 		} else {
-//			System.out.println("Ref B");
 			citationContent.insert(0, "{{reference}}");
 			citationContent.append("{{/reference}}");
 		}
-		
+
+		/** Parse the citation and place it*/
 		List<Block> result = this.contentParser.parse(citationContent.toString(), context, true, context.isInline()).getChildren();
 
+		/** Add pages at the end of the parsed content */
 		if (hasPages) {
 			RawBlock rb = new RawBlock("<sup><span class=\"footnoteRef\">, p." + citePages + "</span></sup>", Syntax.HTML_4_01);
 			result.add(rb);

@@ -2,8 +2,6 @@ package org.xwiki.rendering.citations;
 
 import org.xwiki.component.wiki.WikiComponent;
 
-import com.xpn.xwiki.doc.XWikiDocument;
-
 public interface Citation extends WikiComponent {
 
 	public static final String CLASS = "Citation";

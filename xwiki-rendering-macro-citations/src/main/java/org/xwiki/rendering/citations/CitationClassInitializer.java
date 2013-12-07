@@ -2,16 +2,6 @@ package org.xwiki.rendering.citations;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.xwiki.component.annotation.Component;
-import org.xwiki.sheet.SheetBinder;
-
-import com.xpn.xwiki.doc.XWikiDocument;
-import com.xpn.xwiki.internal.mandatory.AbstractMandatoryDocumentInitializer;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
@@ -20,11 +10,10 @@ import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.model.reference.EntityReference;
 import org.xwiki.sheet.SheetBinder;
 
-import com.xpn.xwiki.XWiki;
 import com.xpn.xwiki.XWikiContext;
 import com.xpn.xwiki.doc.XWikiDocument;
+import com.xpn.xwiki.internal.mandatory.AbstractMandatoryDocumentInitializer;
 import com.xpn.xwiki.objects.classes.BaseClass;
-import com.xpn.xwiki.objects.classes.BooleanClass;
 
 @Component
 @Named(Citation.CLASS+"Initializer")
@@ -99,9 +88,6 @@ public class CitationClassInitializer extends AbstractMandatoryDocumentInitializ
 	public static final String FIELD_ISBN = "isbn";
 	public static final String FIELDPN_ISBN = "ISBN";
 	
-//	public static final String FIELD_NOTE = "note";
-//	public static final String FIELDPN_NOTE = "Note";
-	
 	/**
 	 * Used to bind a class to a document sheet.
 	 */
@@ -132,7 +118,6 @@ public class CitationClassInitializer extends AbstractMandatoryDocumentInitializ
 		// Add missing class fields
 		BaseClass baseClass = document.getXClass();
 		
-//		needsUpdate |= baseClass.addTextField(FIELD_TYPE, FIELDPN_TYPE, 30);
 		needsUpdate |= baseClass.addStaticListField(FIELD_TYPE, FIELDPN_TYPE, "Article|Book|Booklet|Conference|Inbook|Incollection|Inproceedings|Manual|Masterthesis|Misc|Phdthesis|Proceedings|Techreport|Unpublished");
 		needsUpdate |= baseClass.addTextField(FIELD_KEY, FIELDPN_KEY, 30);
 		needsUpdate |= baseClass.addTextField(FIELD_AUTHOR, FIELDPN_AUTHOR, 30);
