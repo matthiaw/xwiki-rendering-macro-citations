@@ -25,10 +25,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.xwiki.rendering</groupId>
-  <artifactId>xwiki-rendering-macro-lyrics</artifactId>
+  <artifactId>xwiki-rendering-macro-citations</artifactId>
   <version>1.0</version>
-  <name>XWiki Macro - Lyrics</name>
-  <description>XWiki Macro - Lyrics</description>
+  <name>XWiki Macro - Citations</name>
+  <description>XWiki Macro - Citations</description>
   <properties>
     <commons.version>5.3-SNAPSHOT</commons.version>
   </properties>

@@ -161,16 +161,6 @@ public class CitationMacro extends AbstractMacro<CitationMacroParameters> {
 				if (isValid(value)) {
 					citationContent.append(". " + value + ".");
 				}
-
-				if (parameters.getFootnote()!=null) {
-					if (!parameters.getFootnote().equals("false")) {
-						citationContent.insert(0, "{{reference}}");
-						citationContent.append("{{/reference}}");
-					}
-				} else {
-					citationContent.insert(0, "{{reference}}");
-					citationContent.append("{{/reference}}");
-				}
 				
 			}
 
@@ -248,18 +238,6 @@ public class CitationMacro extends AbstractMacro<CitationMacroParameters> {
 				if (isValid(pages)) {
 					citePages = pages;
 					hasPages = true;
-				}
-				
-				if (parameters.getFootnote()!=null) {
-					if (!parameters.getFootnote().equals("false")) {
-						citationContent.insert(0, "{{reference}}");
-						citationContent.append("{{/reference}}");
-					} else {
-						hasPages = false;
-					}
-				} else {
-					citationContent.insert(0, "{{reference}}");
-					citationContent.append("{{/reference}}");
 				}
 				
 			}
@@ -342,23 +320,34 @@ public class CitationMacro extends AbstractMacro<CitationMacroParameters> {
 					hasPages = true;
 				}
 				
-				if (parameters.getFootnote()!=null) {
-					if (!parameters.getFootnote().equals("false")) {
-						citationContent.insert(0, "{{reference}}");
-						citationContent.append("{{/reference}}");
-					} else {
-						hasPages = false;
-					}
-				} else {
-					citationContent.insert(0, "{{reference}}");
-					citationContent.append("{{/reference}}");
-				}
-				
 			}
 		} else {
 			citationContent.append("{{error}}Citation '"+parameters.getKey()+"' not found{{/error}}");
 		}
 
+		String pages = parameters.getPages();
+		if (isValid(pages)) {
+			citePages = pages;
+			hasPages = true;
+		}
+		
+		if (parameters.getFootnote()!=null) {
+			if (parameters.getFootnote().equals("false")) {
+//				System.out.println("Ref A");
+				citationContent.insert(0, "{{reference}}");
+				citationContent.append("{{/reference}}");
+			} else {
+//				System.out.println("Footnote");
+				citationContent.insert(0, "{{footnote}}");
+				citationContent.append("{{/footnote}}");
+				hasPages = false;
+			}
+		} else {
+//			System.out.println("Ref B");
+			citationContent.insert(0, "{{reference}}");
+			citationContent.append("{{/reference}}");
+		}
+		
 		List<Block> result = this.contentParser.parse(citationContent.toString(), context, true, context.isInline()).getChildren();
 
 		if (hasPages) {

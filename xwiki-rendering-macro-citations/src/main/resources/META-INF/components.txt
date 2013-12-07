@@ -1,3 +1,3 @@
-org.xwiki.rendering.citation.CitationClassInitializer
-org.xwiki.rendering.citation.CitationClassBuilder
-org.xwiki.rendering.citation.CitationMacro
+org.xwiki.rendering.citations.CitationClassInitializer
+org.xwiki.rendering.citations.CitationClassBuilder
+org.xwiki.rendering.citations.CitationMacro
